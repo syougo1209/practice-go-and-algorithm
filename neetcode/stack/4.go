@@ -15,7 +15,6 @@ func generateParenthesis(n int) []string {
 	}
 	res := make([]string, 0)
 	for ok := true; ok; ok = next_permutation((base)) {
-		fmt.Println(string(base))
 		if isValid(string(base)) {
 			res = append(res, string(base))
 		}

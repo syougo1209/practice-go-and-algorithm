@@ -3,12 +3,11 @@ package main
 import "fmt"
 
 func main() {
-	a := []int{40, 40, 41, 41}
+	a := []int{1, 2, 3, 4}
 	num := 0
 
 	for ok := true; ok; ok = next_permutation(a) {
 		num++
-		fmt.Println(a)
 	}
 	fmt.Println(num)
 }
