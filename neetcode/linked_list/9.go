@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type Node struct {
 	Val  int
 	key  int
@@ -46,9 +48,9 @@ func (this *LRUCache) Get(key int) int {
 func (this *LRUCache) Put(key int, value int) {
 	node, ok := this.NodeMap[key]
 	if ok {
-		node.Val = value
-		return
+		this.Remove(node)
 	}
+	fmt.Println(this.Cap)
 	this.NodeMap[key] = &Node{Val: value, key: key}
 	this.Insert(this.NodeMap[key])
 	if len(this.NodeMap) > this.Cap {
