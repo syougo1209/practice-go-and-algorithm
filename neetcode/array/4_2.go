@@ -7,26 +7,25 @@ import (
 
 func groupAnagrams(strs []string) [][]string {
 	hashMap := map[string][]string{}
-	for _, str := range strs {
-		sortedStr := sortString(str)
-		if _, ok := hashMap[sortedStr]; !ok {
-			hashMap[sortedStr] = []string{}
+	for _, v := range strs {
+		sortedString := sortString(s)
+		if _, ok := hashMap[sortedString]; !ok {
+			hashMap[sortedString] = []string{}
 		}
-		hashMap[sortedStr] = append(hashMap[sortedStr], str)
+		hashMap[sortedString] = append(hashMap[sortedString], v)
 	}
 
-	var res [][]string
-
+	res := make([][]string, len(hashMap))
 	i := 0
-	for _, anagrams := range hashMap {
-		res = append(res, anagrams)
+	for _, v := range hashMap {
+		res[i] = v
 		i++
 	}
 	return res
 }
 
 func sortString(str string) string {
-	strArray := strings.Split(str, "")
-	sort.Strings(strArray)
-	return strings.Join(strArray, "")
+	strarr := strings.Split(str, "")
+	sort.Strings(strarr)
+	return strings.Join(strarr, "")
 }
