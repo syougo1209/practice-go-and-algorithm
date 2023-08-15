@@ -20,66 +20,53 @@ func (h *TweetHeap) Pop() interface{} {
 }
 
 type Twitter struct {
-	count     int
+	cnt       int
+	followmap map[int]map[int]bool
 	tweetMap  map[int][]*Tweet
-	followMap map[int]map[int]bool
 }
 
 func Constructor() Twitter {
-	return Twitter{tweetMap: make(map[int][]*Tweet), followMap: make(map[int]map[int]bool)}
+	return Twitter{cnt: 0, followMap: map[int]map[int]bool{}, tweetMap: map[int][]*Tweet{}}
 }
 
 func (this *Twitter) PostTweet(userId int, tweetId int) {
-	if _, ok := this.tweetMap[userId]; !ok {
-		this.tweetMap[userId] = make([]*Tweet, 0)
+	if _, ok := tweetMap[userId]; !ok {
+		tweetMap[userId] = []*Tweet{}
 	}
-	this.tweetMap[userId] = append(this.tweetMap[userId], &Tweet{count: this.count, tweetId: tweetId})
-	this.count -= 1
+	index := len(tweetMap[userId])
+	tweetMap[userId] = append(tweetMap[userId], &Tweet{count: this.cnt, tweetId: tweetId, followeeId: userId, index: index})
+	this.cnt--
 }
 
 func (this *Twitter) GetNewsFeed(userId int) []int {
 	res := make([]int, 0)
-	minHeap := TweetHeap{}
-
 	if _, ok := this.followMap[userId]; !ok {
-		this.followMap[userId] = make(map[int]bool)
+		this.followMap[userId] = map[int]bool{}
 	}
 	this.followMap[userId][userId] = true
-	for followeeId, _ := range this.followMap[userId] {
-		if _, ok := this.tweetMap[followeeId]; ok {
-			index := len(this.tweetMap[followeeId]) - 1
-			tweet := this.tweetMap[followeeId][index]
-			heap.Push(&minHeap, &Tweet{
-				count:      tweet.count,
-				tweetId:    tweet.tweetId,
-				followeeId: followeeId,
-				index:      index - 1})
+
+	minHeap := TweetHeap{}
+	for followeeId := range this.followMap[userId] {
+		if _, ok := this.TweetMap[followeeId]; ok {
+			heap.Push(&minHeap, this.TweetMap[followeeId][len(this.TweetMap[followeeId])-1])
 		}
 	}
-
-	for len(minHeap) > 0 && len(res) < 10 {
+	for len(heap) > 0 && len(res) < 10 {
 		tweet := heap.Pop(&minHeap).(*Tweet)
-		res = append(res, tweet.tweetId)
-		if tweet.index >= 0 {
-			nextTweet := this.tweetMap[tweet.followeeId][tweet.index]
-			heap.Push(&minHeap, &Tweet{count: nextTweet.count,
-				tweetId:    nextTweet.tweetId,
-				followeeId: tweet.followeeId,
-				index:      tweet.index - 1})
+		if tweet.index > 0 {
+			heap.Push(this.tweetMap[tweet.followeeId][tweet.index-1])
 		}
 	}
 	return res
 }
 
 func (this *Twitter) Follow(followerId int, followeeId int) {
-	if _, ok := this.followMap[followerId]; !ok {
-		this.followMap[followerId] = make(map[int]bool)
+	if _, ok := followmap[followerId]; !ok {
+		followmap[followerId] = map[int]bool{}
 	}
-	this.followMap[followerId][followeeId] = true
+	followmap[followerId][followeeId] = true
 }
 
 func (this *Twitter) Unfollow(followerId int, followeeId int) {
-	if _, ok := this.followMap[followerId]; ok {
-		delete(this.followMap[followerId], followeeId)
-	}
+	delete(followmap[followerId], followeeId)
 }
